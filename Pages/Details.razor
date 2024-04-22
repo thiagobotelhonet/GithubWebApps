@@ -1,0 +1,145 @@
+﻿@page "/user/{Login}"
+@using GithubWEBAppLean.Interface
+@inject IServiceGitHub serviceGitHub
+
+
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-cards">
+            <div class="col-lg-12">
+                <div class="row row-cards">
+                    <div class="col-12">
+                        <EditForm class="card" Model="_model">
+                            <div class="card-body">
+                                <h3 class="card-title"><strong>Dados do usuário:</strong> @_model.login</h3>
+                                <div class="row row-cards">
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="Login" class="form-label">Login</label>
+                                            <InputText class="form-control" id="Login" @bind-Value="_model.login" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="NodeId" class="form-label">Node ID</label>
+                                            <InputText class="form-control" id="NodeId" @bind-Value="_model.node_id" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="AvatarUrl" class="form-label">URL do Avatar</label>
+                                            <InputText class="form-control" id="AvatarUrl" @bind-Value="_model.avatar_url" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="HtmlUrl" class="form-label">URL do HTML</label>
+                                            <InputText class="form-control" id="HtmlUrl" @bind-Value="_model.html_url" readonly />
+                                        </div>
+                                    </div>
+                                    <!-- ... More text inputs for other URL fields ... -->
+                                    <!-- Number inputs -->
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="PublicRepos" class="form-label">Repositórios Públicos</label>
+                                            <InputNumber class="form-control" id="PublicRepos" @bind-Value="_model.public_repos" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="PublicGists" class="form-label">Gists Públicos</label>
+                                            <InputNumber class="form-control" id="PublicGists" @bind-Value="_model.public_gists" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="Followers" class="form-label">Seguidores</label>
+                                            <InputNumber class="form-control" id="Followers" @bind-Value="_model.followers" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="Following" class="form-label">Seguindo</label>
+                                            <InputNumber class="form-control" id="Following" @bind-Value="_model.following" readonly />
+                                        </div>
+                                    </div>
+
+                                    <!-- Date inputs -->
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="CreatedAt" class="form-label">Criado Em</label>
+                                            <InputDate class="form-control" id="CreatedAt" @bind-Value="_model.created_at" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-md-6">
+                                        <div class="mb-3">
+                                            <label for="UpdatedAt" class="form-label">Atualizado Em</label>
+                                            <InputDate class="form-control" id="UpdatedAt" @bind-Value="_model.updated_at" readonly />
+                                        </div>
+                                    </div>
+
+                                    <hr />
+
+                                    <div class="table-responsive">
+                                        <table class="table table-vcenter card-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Repositório</th>
+                                                    <th>Descrição</th>
+                                                    <th>Permissão</th>
+                                                </tr>
+                                            </thead>
+                                            @foreach (var item in _repository)
+                                            {
+
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex py-1 align-items-center">
+                                                                <span class="avatar me-2" style="background-image: url(./pasta.jpg)"></span>
+                                                                <div class="flex-fill">
+                                                                    <div class="font-weight-medium">@item.full_name</div>
+                                                                    <div class="text-secondary"><a href="#" class="text-reset">@item.created_at</a></div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <div>@item.description</div>
+                                                        </td>
+                                                        <td class="text-secondary">
+                                                            User
+                                                        </td>
+
+                                                    </tr>
+                                                </tbody>
+                                            }
+
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </EditForm>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Login { get; set; }
+
+    private User? _model = new();
+    private List<RepositoryGitHub> _repository = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _model = await serviceGitHub.GetAsync(Login);
+
+        _repository = await serviceGitHub.GetListRepositoryAsync(Login);
+    }
+}
+}

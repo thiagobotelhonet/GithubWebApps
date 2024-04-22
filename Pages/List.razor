@@ -1,0 +1,64 @@
+﻿@page "/list-users"
+@using GithubWEBAppLean.Interface
+@inject IServiceGitHub serviceGitHub
+
+<PageTitle>Cadastro de usuários</PageTitle>
+
+<div class="page-header d-print-none">
+    <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col">
+                <h2 class="page-title">
+                    Usuários
+                </h2>
+                <div class="text-secondary mt-1">1 de @countUser Usuários</div>
+            </div>
+            <!-- Page title actions -->
+          
+        </div>
+    </div>
+</div
+
+<div class="page-body">
+    <div class="container-xl">
+        <div class="row row-cards">
+            @foreach (var item in _modelUser)
+            {
+                <div class="col-md-6 col-lg-3">
+
+                    <div class="card">
+                        <div class="card-body p-4 text-center">
+                            <span class="avatar avatar-xl mb-3 rounded" style="background-image: url(@item.avatar_url)"></span>
+                            <h3 class="m-0 mb-1"><a href="/user/@item.login">@item.login</a></h3>
+                            <div class="text-secondary">@item.type</div>
+                            <div class="mt-3">
+                                <span class="badge bg-purple-lt">@item.id</span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <a href="/user/@item.login" class="card-btn">
+                                <!-- Download SVG icon from http://tabler-icons.io/i/mail -->
+                                <svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>
+                                Detalhes
+                            </a>
+                           
+                        </div>
+                    </div>
+
+
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<User> _modelUser = new List<User>();
+    int countUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _modelUser = await serviceGitHub.GetListAsync();
+        countUser = _modelUser.Count;
+    }
+}
